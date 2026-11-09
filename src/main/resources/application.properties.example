@@ -1,0 +1,17 @@
+# Base NUEVA: créala en pgAdmin con el nombre konrad_gourmet2. Flyway crea las 21 tablas y los datos iniciales al arrancar.
+spring.datasource.url=jdbc:postgresql://localhost:5432/konrad_gourmet2
+spring.datasource.username=postgres
+spring.datasource.password=CAMBIA_ESTA_CLAVE
+spring.flyway.enabled=true
+server.port=8080
+# Ministerio: mock (por defecto) o soap
+ministerio.modo=mock
+#ministerio.url=https://servicio.ministerio.gov.co/precios
+correo.remitente=abastecimiento@konradgourmet.co
+# Correo real (opcional). Sin spring.mail.host los correos se simulan en la consola.
+#spring.mail.host=smtp.gmail.com
+#spring.mail.port=587
+#spring.mail.username=tucorreo@gmail.com
+#spring.mail.password=clave-de-aplicacion
+#spring.mail.properties.mail.smtp.auth=true
+#spring.mail.properties.mail.smtp.starttls.enable=true

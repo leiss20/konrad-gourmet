@@ -1,0 +1,1 @@
+ALTER TABLE inventario ADD COLUMN alarma_enviada boolean NOT NULL DEFAULT false;

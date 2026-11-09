@@ -1,0 +1,6 @@
+ALTER TABLE producto ADD COLUMN precio_referencia numeric(12,2) NOT NULL DEFAULT 5000;
+UPDATE producto SET precio_referencia = CASE nombre
+  WHEN 'Res' THEN 28000 WHEN 'Pollo' THEN 11000 WHEN 'Cerdo' THEN 16000 WHEN 'Arroz' THEN 3800
+  WHEN 'Papa' THEN 2200 WHEN 'Pasta' THEN 5200 WHEN 'Frijol' THEN 7600 WHEN 'Lenteja' THEN 6400
+  WHEN 'Repollo' THEN 2000 WHEN 'Tomate' THEN 3500 WHEN 'Cebolla' THEN 2800 WHEN 'Mora' THEN 8000
+  WHEN 'Mango' THEN 5500 ELSE 5000 END;

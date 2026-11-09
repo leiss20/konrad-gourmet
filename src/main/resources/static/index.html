@@ -1,0 +1,1968 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Konrad Gourmet · Abastecimiento</title>
+
+    <style>
+        /* =========================================
+           1. VARIABLES Y CONFIGURACIÓN GENERAL
+        ========================================= */
+
+        :root {
+            --mag: #d6006b;
+            --mor: #6c2a8c;
+            --roj: #c9183d;
+            --ver: #1f8a5b;
+            --lim: #b7d500;
+            --tea: #4e9a9a;
+
+            --tx: #3c3c3b;
+            --mu: #7a7a7a;
+            --bd: #e8e8e8;
+            --sf: #f6f6f7;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font: 14px/1.5 system-ui, "Segoe UI", sans-serif;
+            color: var(--tx);
+            background: #fff;
+        }
+
+        /* =========================================
+           2. ENCABEZADO
+        ========================================= */
+
+        .stripe {
+            height: 5px;
+            background: linear-gradient(
+                90deg,
+                var(--mag) 0 20%,
+                var(--mor) 0 40%,
+                var(--roj) 0 55%,
+                var(--ver) 0 70%,
+                var(--lim) 0 85%,
+                var(--tea) 0
+            );
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 22px;
+            border-bottom: 1px solid var(--bd);
+        }
+
+        .burger {
+            border: 0;
+            background: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--tx);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.05;
+            flex: 1;
+        }
+
+        .logo b {
+            display: block;
+            font-size: 19px;
+            letter-spacing: .02em;
+        }
+
+        .logo small {
+            font-size: 10px;
+            color: var(--mu);
+        }
+
+        .who {
+            font-size: 12px;
+            color: var(--mu);
+            text-align: right;
+        }
+
+        .who a {
+            color: var(--mag);
+        }
+
+        /* =========================================
+           3. ESTRUCTURA PRINCIPAL Y NAVEGACIÓN
+        ========================================= */
+
+        .wrap {
+            display: flex;
+            min-height: calc(100vh - 66px);
+        }
+
+        aside {
+            width: 240px;
+            background: var(--sf);
+            border-right: 1px solid var(--bd);
+            padding: 14px 10px;
+            transition: margin .25s;
+            flex-shrink: 0;
+        }
+
+        body.closed aside {
+            margin-left: -240px;
+        }
+
+        details {
+            margin-bottom: 4px;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--mu);
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        summary::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--c);
+        }
+
+        summary:hover {
+            background: #ececee;
+        }
+
+        .it {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 0;
+            background: none;
+            font: inherit;
+            color: inherit;
+            padding: 8px 8px 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .it:hover {
+            background: #ececee;
+        }
+
+        .it.on {
+            background: var(--tx);
+            color: #fff;
+        }
+
+        main {
+            flex: 1;
+            padding: 26px 24px;
+            max-width: 1000px;
+        }
+
+        /* =========================================
+           4. TÍTULOS Y TARJETAS
+        ========================================= */
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+        }
+
+        .sub {
+            color: var(--mu);
+            margin: 0 0 20px;
+        }
+
+        .card {
+            border: 1px solid var(--bd);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            margin: 0 0 12px;
+            font-size: 15px;
+        }
+
+        /* =========================================
+           5. FORMULARIOS Y BOTONES
+        ========================================= */
+
+        .row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .row > * {
+            flex: 1 1 130px;
+        }
+
+        input,
+        select {
+            font: inherit;
+            padding: 8px 10px;
+            border: 1px solid var(--bd);
+            border-radius: 10px;
+            min-width: 0;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid var(--tea);
+            border-color: transparent;
+        }
+
+        button.b {
+            font: inherit;
+            border: 0;
+            border-radius: 10px;
+            padding: 8px 14px;
+            cursor: pointer;
+            color: #fff;
+            background: var(--mag);
+        }
+
+        button.b:hover {
+            filter: brightness(.92);
+        }
+
+        button.g {
+            background: none;
+            color: var(--tx);
+            border: 1px solid var(--bd);
+        }
+
+        button.s {
+            padding: 4px 10px;
+            font-size: 12px;
+            background: var(--mor);
+        }
+
+        /* =========================================
+           6. TABLAS Y ETIQUETAS
+        ========================================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            color: var(--mu);
+            font-weight: 500;
+        }
+
+        td,
+        th {
+            padding: 9px 8px;
+            border-bottom: 1px solid var(--bd);
+            font-size: 13px;
+        }
+
+        .sc {
+            overflow-x: auto;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            color: var(--c);
+            background: color-mix(in srgb, var(--c) 14%, transparent);
+        }
+
+        /* =========================================
+           7. INDICADORES Y BARRAS
+        ========================================= */
+
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(210px, 1fr)
+            );
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .kpi {
+            border: 1px solid var(--bd);
+            border-top: 4px solid var(--c);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .kpi small {
+            color: var(--mu);
+        }
+
+        .kpi b {
+            display: block;
+            font-size: 22px;
+        }
+
+        .bar {
+            height: 8px;
+            background: var(--bd);
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 4px 0 12px;
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            background: var(--tea);
+        }
+
+        /* =========================================
+           8. NOTIFICACIONES
+        ========================================= */
+
+        #t {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tx);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 99px;
+            opacity: 0;
+            transition: opacity .25s;
+            pointer-events: none;
+        }
+
+        #t.on {
+            opacity: 1;
+        }
+
+        /* =========================================
+           9. DISEÑO RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 800px) {
+            aside {
+                position: fixed;
+                z-index: 5;
+                height: 100%;
+                top: 71px;
+            }
+
+            main {
+                padding: 20px 14px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="closed">
+
+    <!-- =========================================
+         ENCABEZADO
+    ========================================== -->
+
+    <div class="stripe"></div>
+
+    <header>
+
+        <button
+            class="burger"
+            onclick="document.body.classList.toggle('closed')"
+            aria-label="Menú"
+        >
+            ☰
+        </button>
+
+        <div class="logo">
+
+            <svg width="38" height="38" viewBox="0 0 100 100">
+
+                <polygon points="6,4 30,4 30,96 6,96" fill="#d6006b"/>
+                <polygon points="6,4 30,4 30,50 6,50" fill="#6c2a8c"/>
+                <polygon points="6,50 30,50 30,96 6,96" fill="#c9183d"/>
+                <polygon points="30,50 54,26 54,74" fill="#1f8a5b"/>
+                <polygon points="30,50 72,4 98,4 54,52" fill="#b7d500"/>
+                <polygon points="54,52 98,96 70,96 30,50" fill="#4e9a9a"/>
+
+            </svg>
+
+            <div>
+                <b>KONRAD GOURMET</b>
+                <small>FUNDACIÓN UNIVERSITARIA KONRAD LORENZ</small>
+            </div>
+
+        </div>
+
+        <div class="who" id="who"></div>
+
+    </header>
+
+    <!-- =========================================
+         CONTENIDO PRINCIPAL
+    ========================================== -->
+
+    <div class="wrap">
+
+        <aside id="nav"></aside>
+
+        <main id="v"></main>
+
+    </div>
+
+    <div id="t"></div>
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script>
+
+        /* =========================================
+           1. FUNCIONES GENERALES Y UTILIDADES
+        ========================================= */
+
+        const $ = id => document.getElementById(id);
+
+        const money = value =>
+            '$' + Math.round(value).toLocaleString('es-CO');
+
+        const fec = value =>
+            value
+                ? String(value).replace('T', ' ').slice(0, 16)
+                : '';
+
+        const hoy = () =>
+            new Date().toISOString().slice(0, 10);
+
+        const head = (title, subtitle) => `
+            <h1>${title}</h1>
+            <p class="sub">${subtitle}</p>
+        `;
+
+        const O = (array, key, label) =>
+            array.map(item => `
+                <option value="${item[key]}">
+                    ${item[label]}
+                </option>
+            `).join('');
+
+        const tbl = (headers, rows) => `
+            <div class="sc">
+                <table>
+
+                    <tr>
+                        ${headers.map(header => `
+                            <th>${header}</th>
+                        `).join('')}
+                    </tr>
+
+                    ${
+                        rows.length
+                            ? rows.map(row => `
+                                <tr>
+                                    ${row.map(cell => `
+                                        <td>${cell ?? ''}</td>
+                                    `).join('')}
+                                </tr>
+                            `).join('')
+                            : `
+                                <tr>
+                                    <td
+                                        colspan="${headers.length}"
+                                        style="color:var(--mu)"
+                                    >
+                                        Sin registros todavía.
+                                    </td>
+                                </tr>
+                            `
+                    }
+
+                </table>
+            </div>
+        `;
+
+
+        /* =========================================
+           2. CONFIGURACIÓN DE ESTADOS Y ROLES
+        ========================================= */
+
+        const COL = {
+            PENDIENTE: '--lim',
+            'EN TRÁMITE': '--tea',
+            ENVIADA: '--mor',
+            OPCIONADA: '--ver',
+            RECHAZADA: '--roj',
+            SOSPECHOSA: '--mag'
+        };
+
+        const chip = estado => `
+            <span
+                class="chip"
+                style="--c:var(${COL[estado] || '--tea'})"
+            >
+                ${estado}
+            </span>
+        `;
+
+        const ROL = {
+            ADMIN: 'Administrador',
+            JEFE_COCINA: 'Jefe de cocina',
+            MESERO: 'Mesero',
+            AUXILIAR_COMPRAS: 'Auxiliar de compras',
+            DIRECTOR_COMPRAS: 'Director de compras',
+            DIRECTOR_COMERCIAL: 'Director comercial'
+        };
+
+        const VIEWS = {
+            JEFE_COCINA:['platos','solicitar','inventario'],
+            MESERO: ['pedidos'],
+            AUXILIAR_COMPRAS: ['solicitudes'],
+            DIRECTOR_COMPRAS: ['cotizaciones', 'ordenes'],
+            DIRECTOR_COMERCIAL: ['bam'],
+            ADMIN: ['param', 'audit', 'logs']
+        };
+
+        const NAV = [
+            ['Cocina', '--roj', ['platos','solicitar','inventario','pedidos']],
+            ['Compras', '--tea', ['solicitudes', 'cotizaciones', 'ordenes']],
+            ['Gerencia', '--mor', ['bam']],
+            ['Sistema', '--ver', ['param', 'audit', 'logs']]
+        ];
+
+        const TT = {
+            platos: 'Menú de platos',
+            solicitar: 'Solicitar alimentos',
+            pedidos: 'Pedidos',
+            solicitudes: 'Solicitudes',
+            cotizaciones: 'Cotizaciones',
+            ordenes: 'Órdenes de compra',
+            bam: 'Tablero BAM',
+            param: 'Parametrización',
+            audit: 'Auditoría',
+            logs: 'Logs de errores',
+            inventario : 'Inventario'
+        };
+
+
+        /* =========================================
+           3. VARIABLES GLOBALES
+        ========================================= */
+
+        let ME;
+        let CAT;
+        let cur;
+        let tmp = [];
+
+
+        /* =========================================
+           4. CONEXIÓN CON EL BACKEND
+        ========================================= */
+
+        
+async function api(url, method = 'GET', body) {
+
+    const response = await fetch('/api' + url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': obtenerTokenXsrf()
+        },
+        body: body ? JSON.stringify(body) : undefined
+    });
+
+    if (response.status === 401) {
+        window.location.href = '/login.html';
+        throw new Error('Sesión vencida');
+    }
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw new Error(
+            data.error ||
+            (
+                response.status === 403
+                    ? 'No tienes permiso para esta acción.'
+                    : 'Error del servidor'
+            )
+        );
+    }
+
+    return data;
+}
+
+        // Obtiene el token CSRF almacenado en las cookies
+function obtenerTokenXsrf() {
+    const cookie = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+
+    return cookie
+        ? decodeURIComponent(cookie[1])
+        : '';
+}
+
+// Cierra la sesión del usuario
+async function salir() {
+    try {
+        const token = obtenerTokenXsrf();
+
+        await fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'X-XSRF-TOKEN': token
+            }
+        });
+
+        // Redirige al usuario a la pantalla de inicio de sesión
+        window.location.href = '/login.html';
+
+    } catch (error) {
+        console.error('Error al cerrar la sesión:', error);
+    }
+}
+
+
+        /* =========================================
+           5. NOTIFICACIONES Y ACCIONES
+        ========================================= */
+
+        function say(message) {
+
+            const toast = $('t');
+
+            toast.textContent = message;
+            toast.classList.add('on');
+
+            setTimeout(() => {
+                toast.classList.remove('on');
+            }, 2800);
+        }
+
+        async function act(promise, successMessage) {
+
+            try {
+
+                await promise;
+
+                say(successMessage);
+
+                go(cur);
+
+            } catch (error) {
+
+                say(error.message);
+
+            }
+        }
+
+
+        /* =========================================
+           6. FUNCIONES PARA PRODUCTOS Y PLATOS
+        ========================================= */
+
+        const pr = category =>
+            CAT.productos.filter(
+                product => product.id_categoria == category
+            );
+
+        const cp = includeBrand => `
+
+            <div class="row">
+
+                <select
+                    id="c"
+                    onchange="
+                        $('p').innerHTML = O(
+                            pr(this.value),
+                            'id_producto',
+                            'nombre'
+                        )
+                    "
+                >
+                    ${O(
+                        CAT.categorias,
+                        'id_categoria',
+                        'nombre'
+                    )}
+                </select>
+
+                <select id="p">
+                    ${O(
+                        pr(CAT.categorias[0].id_categoria),
+                        'id_producto',
+                        'nombre'
+                    )}
+                </select>
+
+                <input
+                    id="q"
+                    type="number"
+                    min="0"
+                    step="any"
+                    placeholder="Cantidad"
+                >
+
+                <select id="u">
+                    ${O(
+                        CAT.unidades,
+                        'id_unidad',
+                        'nombre'
+                    )}
+                </select>
+
+                ${
+                    includeBrand
+                        ? `
+                            <select id="m">
+                                <option value="">
+                                    Marca (opcional)
+                                </option>
+
+                                ${O(
+                                    CAT.marcas,
+                                    'id_marca',
+                                    'nombre'
+                                )}
+                            </select>
+                        `
+                        : ''
+                }
+
+            </div>
+        `;
+
+        const lst = () =>
+            tmp.map(item => `
+                <span
+                    class="chip"
+                    style="--c:var(--tea)"
+                >
+                    ${item.t}
+                </span>
+            `).join(' ');
+
+
+        /* =========================================
+           7. AGREGAR ELEMENTOS TEMPORALES
+        ========================================= */
+
+        function add() {
+
+            const quantity = +$('q').value;
+
+            if (!(quantity > 0)) {
+                return say('La cantidad debe ser mayor que cero.');
+            }
+
+            const product = $('p');
+            const unit = $('u');
+            const brand = $('m');
+
+            tmp.push({
+
+                idProducto: +product.value,
+
+                cantidad: quantity,
+
+                idUnidad: +unit.value,
+
+                idMarca: brand && brand.value
+                    ? +brand.value
+                    : null,
+
+                t:
+                    product.selectedOptions[0].text +
+                    ' · ' +
+                    quantity +
+                    ' ' +
+                    unit.selectedOptions[0].text
+
+            });
+
+            $('lst').innerHTML = lst();
+
+            $('q').value = '';
+        }
+
+        function addPl() {
+
+            const quantity = +$('oc').value;
+
+            if (!(quantity > 0)) {
+                return say('La cantidad debe ser mayor que cero.');
+            }
+
+            const dish = $('od');
+
+            tmp.push({
+
+                idPlato: +dish.value,
+
+                cantidad: quantity,
+
+                t:
+                    dish.selectedOptions[0].text +
+                    ' x' +
+                    quantity
+
+            });
+
+            $('lst').innerHTML = lst();
+
+            $('oc').value = '';
+        }
+
+        const procesosAutomaticos = `
+    <div class="card">
+        <h2>Procesos automáticos</h2>
+
+        <p class="sub">
+            Corren solos (inventario a las 23:00, promociones los lunes a las 8:00).
+            Aquí puedes lanzarlos a mano.
+        </p>
+
+        <div class="row">
+            <button class="b"
+                onclick="act(
+                    api('/admin/inventario/procesar', 'POST'),
+                    'Inventario procesado · revisa la Auditoría'
+                )">
+                Procesar inventario ahora
+            </button>
+
+            <button class="b g"
+                onclick="act(
+                    api('/admin/promociones/enviar', 'POST'),
+                    'Promociones enviadas · revisa la Auditoría'
+                )">
+                Enviar promociones ahora
+            </button>
+        </div>
+    </div>
+`;
+
+
+        /* =========================================
+           8. VISTAS DEL SISTEMA
+        ========================================= */
+
+        const V = {
+
+            /* -------------------------------------
+               8.1 MENÚ DE PLATOS
+            ------------------------------------- */
+
+            async platos() {
+
+                const list = await api('/menu/platos');
+
+                return head(
+                    'Menú de platos',
+                    'Jefe de cocina · MenuFacade → MenuService → PlatoRepository'
+                ) + `
+
+                    <div class="card">
+
+                        <h2>Registrar plato</h2>
+
+                        <div class="row">
+
+                            <input
+                                id="pn"
+                                placeholder="Nombre del plato"
+                            >
+
+                            <input
+                                id="pp"
+                                type="number"
+                                min="0"
+                                placeholder="Precio de venta"
+                            >
+
+                        </div>
+
+                        ${cp(0)}
+
+                        <div class="row">
+                            <button class="b g" onclick="add()">
+                                + Ingrediente
+                            </button>
+                        </div>
+
+                        <p id="lst">${lst()}</p>
+
+                        <button
+                            class="b"
+                            onclick="
+                                act(
+                                    api('/menu/platos', 'POST', {
+                                        nombre: $('pn').value,
+                                        precio: +$('pp').value,
+                                        ingredientes: tmp
+                                    }),
+                                    'Plato registrado'
+                                )
+                            "
+                        >
+                            Guardar plato
+                        </button>
+
+                    </div>
+
+                    <div class="card">
+
+                        <h2>Menú de tu sucursal</h2>
+
+                        ${tbl(
+                            ['Plato', 'Ingredientes', 'Precio'],
+
+                            list.map(plate => [
+                                plate.nombre,
+                                plate.ingredientes,
+                                money(plate.precio_venta)
+                            ])
+                        )}
+
+                    </div>
+                `;
+            },
+
+            async inventario() {
+    // 1. Consultar el inventario
+    const L = await api('/inventario');
+
+    // 2. Identificar productos con nivel igual o inferior al 25 %
+    const alertas = L.filter(item =>
+        item.porcentaje != null && item.porcentaje <= 25
+    );
+
+    // 3. Construir la alerta de inventario
+    const alertaHTML = alertas.length
+        ? `
+            <div class="card" style="border-color:var(--roj)">
+                <h2 style="color:var(--roj)">
+                    Alarma: ${alertas.length} producto(s) en 25 % o menos
+                </h2>
+
+                ${alertas.map(item => `
+                    <span class="chip" style="--c:var(--roj)">
+                        ${item.producto} · ${item.porcentaje} %
+                    </span>
+                `).join(' ')}
+
+                <p class="sub" style="margin-top:10px">
+                    Crea una solicitud de alimentos para reponerlos.
+                </p>
+            </div>
+        `
+        : '';
+
+    // 4. Construir las filas de la tabla
+    const filas = L.map(item => {
+        const nivelBajo =
+            item.porcentaje != null && item.porcentaje <= 25;
+
+        const nivelHTML = nivelBajo
+            ? `<span class="chip" style="--c:var(--roj)">
+                  ${item.porcentaje} %
+               </span>`
+            : `${item.porcentaje ?? ''} %`;
+
+        return [
+            item.producto,
+            item.unidad,
+            item.cantidad_actual,
+            item.cantidad_referencia,
+            nivelHTML
+        ];
+    });
+
+    // 5. Construir y retornar la vista completa
+    return (
+        head(
+            'Inventario',
+            'Jefe de cocina · alarma cuando un producto llega al 25 %'
+        )
+        + alertaHTML
+        + `
+            <div class="card">
+                ${tbl(
+                    ['Producto', 'Unidad', 'Actual', 'Referencia', 'Nivel'],
+                    filas
+                )}
+            </div>
+        `
+    );
+},
+
+
+            /* -------------------------------------
+               8.2 SOLICITAR ALIMENTOS
+            ------------------------------------- */
+
+            async solicitar() {
+
+                const list = await api('/compras/solicitudes');
+
+                return head(
+                    'Solicitar alimentos',
+                    'Jefe de cocina · ComprasFacade → ComprasService → SolicitudRepository'
+                ) + `
+
+                    <div class="card">
+
+                        <h2>Nueva solicitud</h2>
+
+                        ${cp(1)}
+
+                        <div class="row">
+
+                            <button class="b g" onclick="add()">
+                                + Producto
+                            </button>
+
+                        </div>
+
+                        <p id="lst">${lst()}</p>
+
+                        <button
+                            class="b"
+                            onclick="
+                                act(
+                                    api('/compras/solicitudes', 'POST', {
+                                        items: tmp
+                                    }),
+                                    'Solicitud creada en estado PENDIENTE'
+                                )
+                            "
+                        >
+                            Enviar solicitud
+                        </button>
+
+                    </div>
+
+                    <div class="card">
+
+                        <h2>Mis solicitudes</h2>
+
+                        ${tbl(
+                            ['N.º', 'Fecha', 'Productos', 'Estado'],
+
+                            list.map(item => [
+                                item.numero_solicitud,
+                                fec(item.fecha_solicitud),
+                                item.productos,
+                                chip(item.estado)
+                            ])
+                        )}
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.3 PEDIDOS
+            ------------------------------------- */
+
+            async pedidos() {
+
+                const [plates, orders] = await Promise.all([
+
+                    api('/menu/platos'),
+
+                    api('/menu/pedidos')
+
+                ]);
+
+                return head(
+                    'Pedidos',
+                    'Mesero · registro de pedidos por mesa'
+                ) + `
+
+                    <div class="card">
+
+                        <h2>Registrar pedido</h2>
+
+                        <div class="row">
+
+                            <input
+                                id="om"
+                                type="number"
+                                min="1"
+                                placeholder="Mesa"
+                            >
+
+                            <select id="od">
+                                ${O(
+                                    plates,
+                                    'id_plato',
+                                    'nombre'
+                                )}
+                            </select>
+
+                            <input
+                                id="oc"
+                                type="number"
+                                min="1"
+                                placeholder="Cantidad"
+                            >
+
+                            <button
+                                class="b g"
+                                onclick="addPl()"
+                            >
+                                + Plato
+                            </button>
+
+                        </div>
+
+                        <p id="lst">${lst()}</p>
+
+                        <button
+                            class="b"
+                            onclick="
+                                act(
+                                    api('/menu/pedidos', 'POST', {
+                                        mesa: +$('om').value,
+                                        items: tmp
+                                    }),
+                                    'Pedido registrado'
+                                )
+                            "
+                        >
+                            Registrar pedido
+                        </button>
+
+                    </div>
+
+                    <div class="card">
+
+                        ${tbl(
+                            ['Fecha', 'Mesa', 'Detalle', 'Estado'],
+
+                            orders.map(order => [
+                                fec(order.fecha_hora),
+                                order.numero_mesa,
+                                order.detalle,
+                                order.estado
+                            ])
+                        )}
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.4 SOLICITUDES DE COMPRAS
+            ------------------------------------- */
+
+            async solicitudes() {
+
+                const list = await api('/compras/solicitudes');
+
+                return head(
+                    'Solicitudes de alimentos',
+                    'Auxiliar de compras · consulta y solicitud de cotización'
+                ) + `
+
+                    <div class="card">
+
+                        ${tbl(
+
+                            [
+                                'N.º',
+                                'Fecha',
+                                'Sucursal',
+                                'Productos',
+                                'Estado',
+                                'Cotizar'
+                            ],
+
+                            list.map(item => [
+
+                                item.numero_solicitud,
+
+                                fec(item.fecha_solicitud),
+
+                                item.sucursal,
+
+                                item.productos,
+
+                                chip(item.estado),
+
+                                item.estado === 'PENDIENTE'
+                                    ? `
+                                        <select id="pv${item.id_solicitud}">
+                                            ${O(
+                                                CAT.proveedores,
+                                                'id_proveedor',
+                                                'nombre'
+                                            )}
+                                        </select>
+
+                                        <input
+                                            id="pl${item.id_solicitud}"
+                                            type="date"
+                                            value="${hoy()}"
+                                        >
+
+                                        <button
+                                            class="b s"
+                                            onclick="
+                                                act(
+                                                    api(
+                                                        '/compras/solicitudes/${item.id_solicitud}/cotizar',
+                                                        'POST',
+                                                        {
+                                                            idProveedor: +$('pv${item.id_solicitud}').value,
+                                                            plazo: $('pl${item.id_solicitud}').value
+                                                        }
+                                                    ),
+                                                    'Cotización ENVIADA'
+                                                )
+                                            "
+                                        >
+                                            Enviar
+                                        </button>
+                                    `
+                                    : '—'
+
+                            ])
+
+                        )}
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.5 COTIZACIONES
+            ------------------------------------- */
+
+            async cotizaciones() {
+
+                const list = await api('/compras/cotizaciones');
+
+                return head(
+                    'Cotizaciones',
+                    'Director de compras · validación contra el precio del Ministerio (MinisterioAdapter)'
+                ) + `
+
+                    <div class="card">
+
+                        ${tbl(
+
+                            [
+                                'Proveedor',
+                                'Solicitud',
+                                'Estándar Ministerio',
+                                'Valor proveedor',
+                                'Estado',
+                                ''
+                            ],
+
+                            list.map(item => [
+
+                                item.proveedor,
+
+                                item.solicitud,
+
+                                money(item.valor_total_ministerio),
+
+                                item.valor_total_proveedor
+                                    ? money(item.valor_total_proveedor)
+                                    : `
+                                        <input
+                                            id="v${item.id_cotizacion}"
+                                            type="number"
+                                            placeholder="Valor total"
+                                            style="width:130px"
+                                        >
+                                    `,
+
+                                chip(item.estado),
+
+                                item.orden
+                                    ? item.orden
+
+                                    : item.estado === 'OPCIONADA'
+                                        ? `
+                                            <button
+                                                class="b s"
+                                                onclick="
+                                                    act(
+                                                        api(
+                                                            '/compras/cotizaciones/${item.id_cotizacion}/orden',
+                                                            'POST'
+                                                        ),
+                                                        'Orden de compra generada'
+                                                    )
+                                                "
+                                            >
+                                                Generar orden
+                                            </button>
+                                        `
+
+                                        : item.estado === 'ENVIADA'
+                                            ? `
+                                                <button
+                                                    class="b s"
+                                                    onclick="
+                                                        act(
+                                                            api(
+                                                                '/compras/cotizaciones/${item.id_cotizacion}/validar',
+                                                                'POST',
+                                                                {
+                                                                    valor: +$('v${item.id_cotizacion}').value
+                                                                }
+                                                            ),
+                                                            'Cotización validada'
+                                                        )
+                                                    "
+                                                >
+                                                    Validar
+                                                </button>
+                                            `
+                                            : ''
+
+                            ])
+
+                        )}
+
+                        <p class="sub" style="margin-top:12px">
+                            Más de 25 % sobre el estándar → RECHAZADA.
+                            Más de 50 % por debajo → SOSPECHOSA.
+                            En otro caso → OPCIONADA.
+                        </p>
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.6 ÓRDENES DE COMPRA
+            ------------------------------------- */
+
+            async ordenes() {
+
+                const list = await api('/compras/ordenes');
+
+                return head(
+                    'Órdenes de compra',
+                    'Director de compras'
+                ) + `
+
+                    <div class="card">
+
+                        ${tbl(
+
+                            [
+                                'N.º',
+                                'Fecha',
+                                'Proveedor',
+                                'Estado',
+                                'Total'
+                            ],
+
+                            list.map(order => [
+
+                                order.numero_orden,
+
+                                fec(order.fecha_generacion),
+
+                                order.proveedor,
+
+                                order.estado,
+
+                                money(order.total)
+
+                            ])
+
+                        )}
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.7 TABLERO BAM
+            ------------------------------------- */
+
+            async bam() {
+
+                const data = await api('/bam');
+
+                const demand = data.demanda;
+
+                const max = Math.max(
+                    1,
+                    ...demand.map(item => item.total)
+                );
+
+                return head(
+                    'Tablero BAM',
+                    'Director comercial · indicadores del negocio'
+                ) + `
+
+                    <div class="kpis">
+
+                        <div
+                            class="kpi"
+                            style="--c:var(--mag)"
+                        >
+                            <small>
+                                Producto de mayor demanda (último mes)
+                            </small>
+
+                            <b>${data.productoTop}</b>
+                        </div>
+
+                        <div
+                            class="kpi"
+                            style="--c:var(--tea)"
+                        >
+                            <small>
+                                Restaurante de mayor demanda (último mes)
+                            </small>
+
+                            <b>${data.restauranteTop}</b>
+                        </div>
+
+                        <div
+                            class="kpi"
+                            style="--c:var(--ver)"
+                        >
+                            <small>
+                                Proveedor con mejores precios (último año)
+                            </small>
+
+                            <b>${data.proveedorTop}</b>
+                        </div>
+
+                    </div>
+
+                    <div class="card">
+
+                        <h2>Demanda por producto</h2>
+
+                        ${
+                            demand.map(item => `
+
+                                ${item.nombre}
+
+                                <span class="sub">
+                                    · ${item.total}
+                                </span>
+
+                                <div class="bar">
+
+                                    <i
+                                        style="width:${item.total / max * 100}%"
+                                    ></i>
+
+                                </div>
+
+                            `).join('')
+                            || '<span class="sub">Sin datos todavía.</span>'
+                        }
+
+                    </div>
+                `;
+            },
+
+
+            /* -------------------------------------
+               8.8 PARAMETRIZACIÓN
+            ------------------------------------- */
+
+            async param() {
+
+                const theme = await fetch('/api/tema')
+                    .then(response => response.json());
+
+                CAT = await api('/catalogo');
+
+                const products = await api('/admin/productos');
+
+                const bloque = (table, title, list) => `
+
+                    <div class="card">
+
+                        <h2>${title}</h2>
+
+                        <div class="row">
+
+                            <input
+                                id="n_${table}"
+                                placeholder="Nuevo nombre"
+                            >
+
+                            <button
+                                class="b"
+                                onclick="
+                                    act(
+                                        api(
+                                            '/admin/catalogo/${table}',
+                                            'POST',
+                                            {
+                                                nombre: $('n_${table}').value
+                                            }
+                                        ),
+                                        '${title}: agregado'
+                                    )
+                                "
+                            >
+                                Agregar
+                            </button>
+
+                        </div>
+
+                        ${
+                            list.map(item => `
+                                <span
+                                    class="chip"
+                                    style="--c:var(--tea)"
+                                >
+                                    ${item.nombre}
+                                </span>
+                            `).join(' ')
+                        }
+
+                    </div>
+                `;
+
+                return head(
+                    'Parametrización',
+                    'Administrador · catálogos, productos y tema'
+                ) + `
+
+                    <div class="card">
+
+                        <h2>Color principal de la marca</h2>
+
+                        <div class="row">
+
+                            <input
+                                id="col"
+                                type="color"
+                                value="${theme.color}"
+                                style="height:40px"
+                            >
+
+                            <button
+                                class="b"
+                                onclick="
+                                    act(
+                                        api(
+                                            '/admin/tema',
+                                            'PUT',
+                                            {
+                                                color: $('col').value
+                                            }
+                                        ).then(() => {
+                                            document.documentElement.style.setProperty(
+                                                '--mag',
+                                                $('col').value
+                                            );
+                                        }),
+                                        'Tema actualizado'
+                                    )
+                                "
+                            >
+                                Guardar color
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    ${bloque(
+                        'categoria',
+                        'Categorías',
+                        CAT.categorias
+                    )}
+
+                    <div class="card">
+
+                        <h2>Productos</h2>
+
+                        <p class="sub">
+                            Cada producto pertenece a una categoría,
+                            tiene una unidad base (Kg, Litro…)
+                            y un precio de referencia por esa unidad.
+                        </p>
+
+                        <div class="row">
+
+                            <input
+                                id="pnm"
+                                placeholder="Nombre (ej. Naranja)"
+                            >
+
+                            <select id="pct">
+                                ${O(
+                                    CAT.categorias,
+                                    'id_categoria',
+                                    'nombre'
+                                )}
+                            </select>
+
+                            <select id="pun">
+                                ${O(
+                                    CAT.unidades,
+                                    'id_unidad',
+                                    'nombre'
+                                )}
+                            </select>
+
+                            <input
+                                id="ppr"
+                                type="number"
+                                min="0"
+                                placeholder="Precio de referencia"
+                            >
+
+                            <button
+                                class="b"
+                                onclick="
+                                    act(
+                                        api(
+                                            '/admin/productos',
+                                            'POST',
+                                            {
+                                                nombre: $('pnm').value,
+                                                idCategoria: +$('pct').value,
+                                                idUnidad: +$('pun').value,
+                                                precio: +$('ppr').value
+                                            }
+                                        ),
+                                        'Producto agregado'
+                                    )
+                                "
+                            >
+                                Agregar producto
+                            </button>
+
+                        </div>
+
+                        ${tbl(
+
+                            [
+                                'Producto',
+                                'Categoría',
+                                'Unidad',
+                                'Precio de referencia',
+                                ''
+                            ],
+
+                            products.map(product => [
+
+                                product.nombre,
+
+                                product.categoria,
+
+                                product.unidad,
+
+                                `
+                                    <input
+                                        id="pr${product.id_producto}"
+                                        type="number"
+                                        value="${product.precio_referencia}"
+                                        style="width:110px"
+                                    >
+                                `,
+
+                                `
+                                    <button
+                                        class="b s"
+                                        onclick="
+                                            act(
+                                                api(
+                                                    '/admin/productos/${product.id_producto}/precio',
+                                                    'PUT',
+                                                    {
+                                                        precio: +$('pr${product.id_producto}').value
+                                                    }
+                                                ),
+                                                'Precio actualizado'
+                                            )
+                                        "
+                                    >
+                                        Guardar
+                                    </button>
+                                `
+
+                            ])
+
+                        )}
+
+                    </div>
+
+                     ${procesosAutomaticos}
+
+                    ${bloque(
+                        'marca',
+                        'Marcas',
+                        CAT.marcas
+                    )}
+
+                    ${bloque(
+                        'unidad',
+                        'Unidades',
+                        CAT.unidades
+                    )}
+
+                `;
+            },
+
+            /* -------------------------------------
+   8.9 AUDITORÍA
+------------------------------------- */
+
+async audit() {
+
+    const L = await api('/admin/auditoria');
+
+    return head(
+        'Auditoría',
+        'Administrador · acción, usuario, fecha y hora'
+    ) + `
+
+        <div class="card">
+
+            ${tbl(
+                [
+                    'Fecha y hora',
+                    'Usuario',
+                    'Acción',
+                    'Tabla',
+                    'Detalle'
+                ],
+
+                L.map(a => [
+                    fec(a.fecha_hora),
+                    a.usuario,
+                    a.accion,
+                    a.tabla_afectada,
+                    a.detalle
+                ])
+            )}
+
+        </div>
+    `;
+},
+
+
+            /* -------------------------------------
+               8.9 LOGS DE ERRORES
+            ------------------------------------- */
+
+            async logs() {
+
+                const list = await api('/admin/logs');
+
+                return head(
+                    'Logs de errores',
+                    'Administrador'
+                ) + `
+
+                    <div class="card">
+
+                        ${tbl(
+
+                            [
+                                'Fecha y hora',
+                                'Módulo',
+                                'Mensaje'
+                            ],
+
+                            list.map(item => [
+
+                                fec(item.fecha_hora),
+
+                                item.modulo,
+
+                                item.mensaje
+
+                            ])
+
+                        )}
+
+                    </div>
+                `;
+            }
+
+        };
+
+
+        /* =========================================
+           9. GENERACIÓN DEL MENÚ SEGÚN EL ROL
+        ========================================= */
+
+        function menu() {
+
+            $('nav').innerHTML = NAV.map(
+                ([group, color, items]) => {
+
+                    const available = items.filter(
+                        item => VIEWS[ME.rol].includes(item)
+                    );
+
+                    if (!available.length) {
+                        return '';
+                    }
+
+                    return `
+
+                        <details
+                            open
+                            style="--c:var(${color})"
+                        >
+
+                            <summary>
+                                ${group}
+                            </summary>
+
+                            ${
+                                available.map(item => `
+
+                                    <button
+                                        class="it ${cur === item ? 'on' : ''}"
+                                        onclick="go('${item}')"
+                                    >
+                                        ${TT[item]}
+                                    </button>
+
+                                `).join('')
+                            }
+
+                        </details>
+
+                    `;
+
+                }
+            ).join('');
+        }
+
+
+        /* =========================================
+           10. NAVEGACIÓN ENTRE VISTAS
+        ========================================= */
+
+        async function go(view) {
+
+            cur = view;
+
+            tmp = [];
+
+            menu();
+
+            try {
+
+                $('v').innerHTML = await V[view]();
+
+            } catch (error) {
+
+                $('v').innerHTML = `
+                    <div class="card">
+                        ${error.message}
+                    </div>
+                `;
+
+            }
+        }
+
+
+        /* =========================================
+           11. INICIALIZACIÓN DEL SISTEMA
+        ========================================= */
+
+        (async function init() {
+
+            try {
+
+                // Obtener el tema visual
+                const theme = await fetch('/api/tema')
+                    .then(response => response.json());
+
+                document.documentElement.style.setProperty(
+                    '--mag',
+                    theme.color
+                );
+
+                // Obtener usuario autenticado
+                ME = await api('/me');
+
+                // Obtener información de los catálogos
+                CAT = await api('/catalogo');
+
+                // Mostrar información del usuario
+                $('who').innerHTML = `
+
+                    ${ME.nombre}
+
+                    <br>
+
+                    ${ROL[ME.rol]}
+
+                    ·
+
+                    <a href="#" onclick="salir();return false">Salir</a>
+
+                `;
+
+                // Mostrar el menú en pantallas grandes
+                if (innerWidth > 800) {
+                    document.body.classList.remove('closed');
+                }
+
+                // Abrir la primera vista permitida para el usuario
+                go(VIEWS[ME.rol][0]);
+
+            } catch (error) {
+
+                console.error(
+                    'Error al inicializar el sistema:',
+                    error
+                );
+
+            }
+
+        })();
+
+    </script>
+
+</body>
+</html>
