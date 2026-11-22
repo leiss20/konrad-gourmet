@@ -82,6 +82,14 @@ public class AdminFacade {
         return inv.procesar();
     }
 
+    public List<Map<String, Object>> inventarioGeneral() {
+        return inv.inventarioGeneral();
+    }
+
+    public void reabastecer(String e, long idInventario, double cantidad) {
+        inv.reabastecer(e, idInventario, cantidad);
+    }
+
     // Promociones
     public String enviarPromociones() {
         return promo.enviar();

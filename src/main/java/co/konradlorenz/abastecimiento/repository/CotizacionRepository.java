@@ -145,15 +145,121 @@ public class CotizacionRepository extends BaseRepository {
 
     private static final String SQL_LISTAR_ORDENES = """
         SELECT
+            o.id_orden,
             o.numero_orden,
             o.fecha_generacion,
             pr.nombre AS proveedor,
             o.estado,
-            o.total
+            o.total,
+
+            (
+                SELECT string_agg(
+                    su.nombre || ': ' || p.nombre || ' '
+                        || trim_scale(sd.cantidad)::text || ' ' || u.nombre,
+                    ' · '
+                    ORDER BY su.nombre, p.nombre
+                )
+                FROM cotizacion_detalle cd
+                JOIN solicitud_detalle sd
+                    ON sd.id_solicitud_detalle = cd.id_solicitud_detalle
+                JOIN solicitud so
+                    ON so.id_solicitud = sd.id_solicitud
+                JOIN sucursal su
+                    ON su.id_sucursal = so.id_sucursal
+                JOIN producto p
+                    ON p.id_producto = sd.id_producto
+                JOIN unidad u
+                    ON u.id_unidad = sd.id_unidad
+                WHERE cd.id_cotizacion = o.id_cotizacion
+            ) AS detalle
+
         FROM orden_compra o
         JOIN proveedor pr
             ON pr.id_proveedor = o.id_proveedor
         ORDER BY o.id_orden DESC
+        """;
+
+    /*
+     * Recepción de mercancía: la orden pasa de 'Generada' a 'Recibida'.
+     * La condición estado = 'Generada' evita recibirla dos veces.
+     */
+    private static final String SQL_ORDEN_POR_ID = """
+        SELECT id_orden, numero_orden, estado
+        FROM orden_compra
+        WHERE id_orden = :o
+        """;
+
+    private static final String SQL_MARCAR_RECIBIDA = """
+        UPDATE orden_compra
+        SET estado = 'Recibida'
+        WHERE id_orden = :o
+            AND estado = 'Generada'
+        """;
+
+    /*
+     * Al recibir la orden, las solicitudes de alimentos que la originaron
+     * dejan de estar 'EN TRÁMITE' y pasan a 'RECIBIDA'.
+     */
+    private static final String SQL_SOLICITUDES_RECIBIDAS = """
+        UPDATE solicitud
+        SET estado = 'RECIBIDA'
+        WHERE id_solicitud IN (
+            SELECT sd.id_solicitud
+            FROM orden_compra o
+            JOIN cotizacion_detalle cd
+                ON cd.id_cotizacion = o.id_cotizacion
+            JOIN solicitud_detalle sd
+                ON sd.id_solicitud_detalle = cd.id_solicitud_detalle
+            WHERE o.id_orden = :o
+        )
+        """;
+
+    /*
+     * Cantidades que pidió el jefe de cocina en la solicitud de origen
+     * de la orden, agrupadas por sucursal y producto. La libra se
+     * convierte a kilos, igual que en el descuento del inventario.
+     */
+    private static final String SQL_RECEPCION_LINEAS = """
+        SELECT
+            so.id_sucursal,
+            sd.id_producto,
+            SUM(
+                sd.cantidad *
+                CASE WHEN u.nombre = 'Libra' THEN 0.5 ELSE 1 END
+            ) AS total
+        FROM orden_compra o
+        JOIN cotizacion_detalle cd
+            ON cd.id_cotizacion = o.id_cotizacion
+        JOIN solicitud_detalle sd
+            ON sd.id_solicitud_detalle = cd.id_solicitud_detalle
+        JOIN solicitud so
+            ON so.id_solicitud = sd.id_solicitud
+        JOIN unidad u
+            ON u.id_unidad = sd.id_unidad
+        WHERE o.id_orden = :o
+        GROUP BY so.id_sucursal, sd.id_producto
+        """;
+
+    /*
+     * Suma lo recibido al inventario y apaga la alarma si el stock
+     * vuelve a superar el 25 % (en el SET se usan los valores previos).
+     */
+    private static final String SQL_SUMAR_INVENTARIO = """
+        UPDATE inventario i
+        SET
+            cantidad_actual = i.cantidad_actual + r.total,
+            ultima_actualizacion = NOW(),
+            alarma_enviada = CASE
+                WHEN i.cantidad_actual + r.total
+                        > i.cantidad_referencia * 0.25
+                    THEN FALSE
+                ELSE i.alarma_enviada
+            END
+        FROM (
+        """ + SQL_RECEPCION_LINEAS + """
+        ) r
+        WHERE i.id_sucursal = r.id_sucursal
+            AND i.id_producto = r.id_producto
         """;
 
     // ==================================================
@@ -384,6 +490,68 @@ public class CotizacionRepository extends BaseRepository {
     public List<Map<String, Object>> ordenes() {
 
         return rows(SQL_LISTAR_ORDENES, m());
+    }
+
+    /**
+     * Consulta una orden de compra por su identificador.
+     * Devuelve null si no existe.
+     */
+    public Map<String, Object> orden(long idOrden) {
+
+        return uno(SQL_ORDEN_POR_ID, m("o", idOrden));
+    }
+
+    // ==================================================
+    // RECEPCIÓN DE MERCANCÍA
+    // ==================================================
+
+    /**
+     * Marca la orden como recibida y suma al inventario de cada
+     * sucursal las cantidades que pidió el jefe de cocina.
+     *
+     * Todo ocurre en una transacción: si algo falla, no queda nada
+     * a medias (ni orden recibida ni inventario modificado).
+     *
+     * @return cantidad de productos de inventario actualizados.
+     */
+    @Transactional
+    public int recibir(long idOrden) {
+
+        int marcadas = db.sql(SQL_MARCAR_RECIBIDA)
+                .params(m("o", idOrden))
+                .update();
+
+        if (marcadas == 0) {
+            throw new IllegalArgumentException(
+                "La orden no existe o ya fue recibida."
+            );
+        }
+
+        int esperadas = rows(SQL_RECEPCION_LINEAS, m("o", idOrden)).size();
+
+        if (esperadas == 0) {
+            throw new IllegalStateException(
+                "La orden no está enlazada a ninguna solicitud de alimentos."
+            );
+        }
+
+        int actualizadas = db.sql(SQL_SUMAR_INVENTARIO)
+                .params(m("o", idOrden))
+                .update();
+
+        if (actualizadas != esperadas) {
+            throw new IllegalStateException(
+                "No se encontró el inventario de todos los productos "
+                + "de la orden."
+            );
+        }
+
+        // Actualiza el estado de las solicitudes de origen
+        db.sql(SQL_SOLICITUDES_RECIBIDAS)
+                .params(m("o", idOrden))
+                .update();
+
+        return actualizadas;
     }
 
     // ==================================================

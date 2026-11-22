@@ -460,6 +460,58 @@ public class ComprasService {
     }
 
     // ==================================================
+    // RECEPCIÓN DE MERCANCÍA
+    // ==================================================
+
+    /**
+     * Registra que llegó la mercancía de una orden de compra.
+     *
+     * Las cantidades no las escribe el administrador: se toman de la
+     * solicitud de alimentos original del jefe de cocina. Se suman al
+     * inventario de la sucursal y, si el stock supera de nuevo el 25 %,
+     * la alarma se apaga.
+     */
+    public String recibirOrden(String email, long idOrden) {
+
+        obtenerUsuario(email);
+
+        if (idOrden <= 0) {
+            throw new IllegalArgumentException(
+                "El identificador de la orden no es válido."
+            );
+        }
+
+        Map<String, Object> orden = cotizaciones.orden(idOrden);
+
+        if (orden == null) {
+            throw new IllegalArgumentException(
+                "La orden de compra no existe."
+            );
+        }
+
+        String numero = String.valueOf(orden.get("numero_orden"));
+
+        if (!"Generada".equals(orden.get("estado"))) {
+            throw new IllegalArgumentException(
+                "La orden " + numero + " ya fue recibida."
+            );
+        }
+
+        int productos = cotizaciones.recibir(idOrden);
+
+        auditoria.registrar(
+            email,
+            "RECIBIR",
+            "orden_compra",
+            idOrden,
+            "Mercancía de " + numero + " recibida; inventario actualizado en "
+                + productos + " producto(s)."
+        );
+
+        return numero;
+    }
+
+    // ==================================================
     // CONSULTAS
     // ==================================================
 

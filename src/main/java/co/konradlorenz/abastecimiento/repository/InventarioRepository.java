@@ -24,6 +24,8 @@ public class InventarioRepository extends BaseRepository {
     private static final String SQL_LISTAR_INVENTARIO = """
         SELECT
             i.id_inventario,
+            i.id_sucursal,
+            s.nombre AS sucursal,
             p.nombre AS producto,
             u.nombre AS unidad,
             i.cantidad_actual,
@@ -34,10 +36,49 @@ public class InventarioRepository extends BaseRepository {
                 1
             ) AS porcentaje
         FROM inventario i
+        JOIN sucursal s
+            ON s.id_sucursal = i.id_sucursal
         JOIN producto p
             ON p.id_producto = i.id_producto
         JOIN unidad u
             ON u.id_unidad = p.id_unidad
+        """;
+
+    private static final String SQL_DETALLE_INVENTARIO = """
+        SELECT
+            i.id_inventario,
+            s.nombre AS sucursal,
+            p.nombre AS producto,
+            u.nombre AS unidad,
+            i.cantidad_actual,
+            i.cantidad_referencia
+        FROM inventario i
+        JOIN sucursal s
+            ON s.id_sucursal = i.id_sucursal
+        JOIN producto p
+            ON p.id_producto = i.id_producto
+        JOIN unidad u
+            ON u.id_unidad = p.id_unidad
+        WHERE i.id_inventario = :i
+        """;
+
+    /*
+     * Suma la mercancía recibida y apaga la alarma en la misma
+     * sentencia cuando el stock vuelve a superar el 25 %.
+     * (En PostgreSQL las expresiones del SET usan los valores
+     * anteriores a la actualización.)
+     */
+    private static final String SQL_REABASTECER = """
+        UPDATE inventario
+        SET
+            cantidad_actual = cantidad_actual + :c,
+            ultima_actualizacion = NOW(),
+            alarma_enviada = CASE
+                WHEN cantidad_actual + :c > cantidad_referencia * 0.25
+                    THEN FALSE
+                ELSE alarma_enviada
+            END
+        WHERE id_inventario = :i
         """;
 
     private static final String SQL_DESCONTAR_INVENTARIO = """
@@ -143,6 +184,32 @@ public class InventarioRepository extends BaseRepository {
         sql.append(" ORDER BY porcentaje, p.nombre");
 
         return rows(sql.toString(), parametros);
+    }
+
+    /**
+     * Consulta un registro de inventario con su sucursal,
+     * producto y unidad. Devuelve null si no existe.
+     */
+    public Map<String, Object> detalle(long idInventario) {
+
+        return uno(SQL_DETALLE_INVENTARIO, m("i", idInventario));
+    }
+
+    // ==================================================
+    // REABASTECIMIENTO
+    // ==================================================
+
+    /**
+     * Suma al inventario la mercancía recibida de los proveedores.
+     * La cantidad se expresa en la unidad base del producto.
+     *
+     * @return filas actualizadas (0 si el inventario no existe).
+     */
+    public int reabastecer(long idInventario, double cantidad) {
+
+        return db.sql(SQL_REABASTECER)
+                .params(m("i", idInventario, "c", cantidad))
+                .update();
     }
 
     // ==================================================

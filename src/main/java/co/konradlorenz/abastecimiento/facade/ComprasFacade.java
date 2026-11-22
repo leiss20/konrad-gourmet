@@ -14,4 +14,5 @@ import org.springframework.stereotype.Component;
   public String ordenar(String e, long id) { return c.ordenar(e, id); }
   public List<Map<String, Object>> cotizaciones() { return c.cotizaciones(); }
   public List<Map<String, Object>> ordenes() { return c.ordenes(); }
+  public String recibirOrden(String e, long id) { return c.recibirOrden(e, id); }
 }

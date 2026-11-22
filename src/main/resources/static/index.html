@@ -517,6 +517,7 @@
         const COL = {
             PENDIENTE: '--lim',
             'EN TRÁMITE': '--tea',
+            RECIBIDA: '--ver',
             ENVIADA: '--mor',
             OPCIONADA: '--ver',
             RECHAZADA: '--roj',
@@ -547,14 +548,14 @@
             AUXILIAR_COMPRAS: ['solicitudes'],
             DIRECTOR_COMPRAS: ['cotizaciones', 'ordenes'],
             DIRECTOR_COMERCIAL: ['bam'],
-            ADMIN: ['param', 'audit', 'logs']
+            ADMIN: ['param', 'recepcion', 'audit', 'logs']
         };
 
         const NAV = [
             ['Cocina', '--roj', ['platos','solicitar','inventario','pedidos']],
             ['Compras', '--tea', ['solicitudes', 'cotizaciones', 'ordenes']],
             ['Gerencia', '--mor', ['bam']],
-            ['Sistema', '--ver', ['param', 'audit', 'logs']]
+            ['Sistema', '--ver', ['param', 'recepcion', 'audit', 'logs']]
         ];
 
         const TT = {
@@ -566,6 +567,7 @@
             ordenes: 'Órdenes de compra',
             bam: 'Tablero BAM',
             param: 'Parametrización',
+            recepcion: 'Recepción de pedidos',
             audit: 'Auditoría',
             logs: 'Logs de errores',
             inventario : 'Inventario'
@@ -1748,6 +1750,58 @@ async function salir() {
             },
 
             /* -------------------------------------
+               8.8b RECEPCIÓN DE PEDIDOS
+            ------------------------------------- */
+
+            async recepcion() {
+
+                const L = await api('/compras/admin/ordenes');
+
+                const pendientes = L.filter(
+                    item => item.estado === 'Generada'
+                ).length;
+
+                return head(
+                    'Recepción de pedidos',
+                    'Administrador · cuando llegue la mercancía de una orden de compra'
+                ) + `
+                    <div class="card">
+
+                        <p class="sub">
+                            ${pendientes} orden(es) por recibir. Al pulsar «Recibido»
+                            se suma al inventario lo que pidió el jefe de cocina
+                            y, si el stock supera el 25 %, la alarma se quita.
+                        </p>
+
+                        ${tbl(
+                            ['N.º', 'Fecha', 'Proveedor', 'Productos que llegan',
+                             'Estado', ''],
+
+                            L.map(item => [
+                                item.numero_orden,
+                                fec(item.fecha_generacion),
+                                item.proveedor,
+                                item.detalle || '—',
+                                item.estado === 'Recibida'
+                                    ? `<span class="chip" style="--c:var(--ver)">Recibida</span>`
+                                    : `<span class="chip" style="--c:var(--tea)">${item.estado}</span>`,
+                                item.estado === 'Generada'
+                                    ? `<button class="b s"
+                                          onclick="act(
+                                              api('/compras/ordenes/${item.id_orden}/recibir', 'POST'),
+                                              'Pedido recibido · inventario actualizado'
+                                          )">
+                                          Recibido
+                                       </button>`
+                                    : ''
+                            ])
+                        )}
+
+                    </div>
+                `;
+            },
+
+            /* -------------------------------------
    8.9 AUDITORÍA
 ------------------------------------- */
 
@@ -1903,6 +1957,48 @@ async audit() {
 
             }
         }
+
+
+        /* =========================================
+           10b. ACTUALIZACIÓN AUTOMÁTICA
+           Refresca la vista abierta cada 15 s para que los
+           estados (EN TRÁMITE, RECIBIDA...) se mantengan al día.
+           No refresca si la persona está escribiendo o tiene
+           productos agregados sin enviar.
+        ========================================= */
+
+        const AUTO = ['solicitar', 'inventario', 'solicitudes',
+                      'cotizaciones', 'ordenes', 'recepcion'];
+
+        async function refrescar() {
+
+            if (!cur || !AUTO.includes(cur) || document.hidden) return;
+
+            const v = $('v');
+            const ae = document.activeElement;
+
+            if (v.contains(ae) &&
+                /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName)) return;
+
+            if (tmp.length) return;
+
+            if ([...v.querySelectorAll('input')].some(i => i.value)) return;
+
+            const vista = cur;
+
+            try {
+                const html = await V[vista]();
+                if (cur === vista && v.innerHTML !== html) {
+                    v.innerHTML = html;
+                }
+            } catch (error) {
+                /* si falla, se reintenta en el siguiente ciclo */
+            }
+        }
+
+        setInterval(refrescar, 15000);
+
+        document.addEventListener('visibilitychange', refrescar);
 
 
         /* =========================================

@@ -173,4 +173,32 @@ public class ComprasController {
 
         return facade.ordenes();
     }
+
+    /**
+     * Consulta las órdenes de compra para registrar su recepción.
+     */
+    @GetMapping("/admin/ordenes")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Map<String, Object>> ordenesAdmin() {
+
+        return facade.ordenes();
+    }
+
+    /**
+     * Registra la llegada de la mercancía de una orden de compra y
+     * reabastece el inventario con lo que pidió el jefe de cocina.
+     */
+    @PostMapping("/ordenes/{id}/recibir")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Map<String, Object> recibirOrden(
+            @PathVariable @Positive long id,
+            Principal principal) {
+
+        String numeroOrden = facade.recibirOrden(
+            principal.getName(),
+            id
+        );
+
+        return Map.of("orden", numeroOrden);
+    }
 }

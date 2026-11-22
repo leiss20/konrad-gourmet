@@ -37,6 +37,10 @@ public class PanelController {
             @Positive double precio
     ) {}
 
+    public record ReabastecerReq(
+            @Positive double cantidad
+    ) {}
+
     private final AdminFacade facade;
 
     public PanelController(AdminFacade facade) {
@@ -142,6 +146,33 @@ public class PanelController {
     @PreAuthorize("hasRole('JEFE_COCINA')")
     public List<Map<String, Object>> inventario(Principal principal) {
         return facade.inventario(principal.getName());
+    }
+
+    /**
+     * Consulta el inventario de todas las sucursales.
+     */
+    @GetMapping("/admin/inventario")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Map<String, Object>> inventarioGeneral() {
+        return facade.inventarioGeneral();
+    }
+
+    /**
+     * Registra la llegada de mercancía de los proveedores
+     * y reabastece el inventario.
+     */
+    @PostMapping("/admin/inventario/{id}/reabastecer")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void reabastecer(
+            @PathVariable @Positive long id,
+            @Valid @RequestBody ReabastecerReq request,
+            Principal principal) {
+
+        facade.reabastecer(
+                principal.getName(),
+                id,
+                request.cantidad()
+        );
     }
 
     /**

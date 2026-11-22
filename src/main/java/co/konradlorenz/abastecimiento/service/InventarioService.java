@@ -197,6 +197,78 @@ public class InventarioService {
     }
 
     /**
+     * Consulta el inventario de todas las sucursales
+     * (uso exclusivo del administrador).
+     */
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> inventarioGeneral() {
+
+        return repo.listar(null);
+    }
+
+    /**
+     * Registra la llegada de mercancía de los proveedores.
+     *
+     * Suma la cantidad al inventario de la sucursal, apaga la
+     * alarma si el stock vuelve a superar el 25 % y deja
+     * constancia en la auditoría.
+     *
+     * @param email        correo del administrador que registra.
+     * @param idInventario registro de inventario a reabastecer.
+     * @param cantidad     cantidad recibida, en la unidad base.
+     */
+    @Transactional
+    public void reabastecer(
+            String email,
+            long idInventario,
+            double cantidad) {
+
+        if (!(cantidad > 0)) {
+            throw new IllegalArgumentException(
+                "La cantidad recibida debe ser mayor que cero."
+            );
+        }
+
+        double recibida = Math.round(cantidad * 1000.0) / 1000.0;
+
+        Map<String, Object> antes = repo.detalle(idInventario);
+
+        if (antes == null) {
+            throw new IllegalArgumentException(
+                "El registro de inventario no existe."
+            );
+        }
+
+        if (repo.reabastecer(idInventario, recibida) == 0) {
+            throw new IllegalStateException(
+                "No se pudo actualizar el inventario."
+            );
+        }
+
+        Map<String, Object> despues = repo.detalle(idInventario);
+
+        auditoria.registrar(
+            email,
+            "REABASTECER",
+            "inventario",
+            idInventario,
+            "Llegaron " + recibida + " " + antes.get("unidad")
+                + " de " + antes.get("producto")
+                + " a " + antes.get("sucursal")
+                + ". Stock: " + antes.get("cantidad_actual")
+                + " → " + despues.get("cantidad_actual")
+                + " (referencia " + despues.get("cantidad_referencia") + ")."
+        );
+
+        LOGGER.info(
+            "Reabastecimiento de {} en {}: +{}",
+            antes.get("producto"),
+            antes.get("sucursal"),
+            recibida
+        );
+    }
+
+    /**
      * Extrae un identificador numérico de un resultado SQL.
      */
     private long obtenerId(Map<String, Object> datos, String campo) {
