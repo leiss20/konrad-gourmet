@@ -4,10 +4,7 @@ import co.konradlorenz.abastecimiento.service.*;
 import java.util.*;
 import org.springframework.stereotype.Component;
 
-/**
- * Patrón Facade: administración, catálogos, tema,
- * BAM, auditoría, errores, inventario y promociones.
- */
+
 @Component
 public class AdminFacade {
 
